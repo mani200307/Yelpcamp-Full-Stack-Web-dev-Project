@@ -44,11 +44,13 @@ app.use(express.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
+const secret = process.env.SECRET || "Presere";
+
 const store = MongoDBStore.create({
     mongoUrl: dbUrl,
     touchAfter: 24 * 60 * 60,
     crypto: {
-        secret: 'squirrel'
+        secret: secret
     }
 });
 
@@ -58,13 +60,15 @@ const store = MongoDBStore.create({
 //     touchAfter: 24*60*60
 // });
 
+
+
 store.on("error", function(e) {
     console.log("Session error", e);
 });
 
 const sessionConfig = {
     store: store,
-    secret: 'Preserve',
+    secret: secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
